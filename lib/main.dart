@@ -1,3 +1,4 @@
+import 'package:crud/pages/Items/items_page.dart';
 import 'package:crud/pages/login_page.dart';
 import 'package:crud/Services/authentication_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,22 +19,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = auth.currentUser;
-    return MultiProvider(
-      providers: [
-        Provider<AuthenticationService>(
-          create: (_)=>AuthenticationService(),
-        ),
-        StreamProvider(create: (context)=> context.read<AuthenticationService>().authStateChanges, initialData: user,)
-      ],
+    return ChangeNotifierProvider.value(
+      value:AuthenticationService(),
       child: MaterialApp(
         title: 'Crud Assignment',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const LoginScreen(),
+        home: const Auth(),
       ),
     );
+  }
+}
+
+class Auth extends StatelessWidget {
+  const Auth({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var user = auth.currentUser;
+    if (user != null) {
+      print(user.email);
+        return ItemsPage();
+    }
+    else {
+      return LoginScreen();
+    }
+
   }
 }

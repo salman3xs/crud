@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '/constants.dart';
 import 'package:image_picker/image_picker.dart';
 
 final _formKey = GlobalKey<FormState>();
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class AddItem extends StatefulWidget {
   const AddItem({Key? key}) : super(key: key);
@@ -198,6 +200,7 @@ class _AddItemState extends State<AddItem> {
           'des': descriptionController.text,
           'imgUrl': url,
           'createdAt': DateTime.now(),
+          'by': auth.currentUser!.uid
         });
       }
     } else {
@@ -206,6 +209,7 @@ class _AddItemState extends State<AddItem> {
         'des': descriptionController.text,
         'imgUrl': 'no',
         'createdAt': DateTime.now(),
+        'by': auth.currentUser!.uid
       });
     }
     Navigator.of(context).pop();

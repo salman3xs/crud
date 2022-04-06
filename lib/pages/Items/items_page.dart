@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
+import '../../main.dart';
 import '/constants.dart';
 import 'Components/add_items.dart';
 import 'Components/edit_dialogue.dart';
+
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class ItemsPage extends StatelessWidget {
   const ItemsPage({Key? key}) : super(key: key);
@@ -18,9 +22,15 @@ class ItemsPage extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: kLightBlue,
+        actions: [
+          IconButton(onPressed: ()async{
+            await FirebaseAuth.instance.signOut();
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context)=>const Auth()), (route) => false) ;
+          }, icon: const Icon(Icons.logout))
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('items').snapshots(),
+        stream: FirebaseFirestore.instance.collection('items').where('by',isEqualTo: auth.currentUser!.uid).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
